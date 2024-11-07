@@ -1,0 +1,88 @@
+-- Create tables
+CREATE TABLE Supplier (
+    SupplierID INT PRIMARY KEY AUTO_INCREMENT,
+    SupplierName VARCHAR(50) NOT NULL,
+    ContactNumber VARCHAR(15),
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Address VARCHAR(100)
+);
+
+CREATE TABLE Product (
+    ProductID INT PRIMARY KEY AUTO_INCREMENT,
+    ProductName VARCHAR(50) NOT NULL,
+    Category VARCHAR(50),
+    Price DECIMAL(10, 2) NOT NULL,
+    Stock INT NOT NULL,
+    SupplierID INT,
+    FOREIGN KEY (SupplierID) REFERENCES Supplier(SupplierID)
+);
+
+CREATE TABLE Customer (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(15),
+    Address VARCHAR(100),
+    RegistrationDate DATE NOT NULL
+);
+
+CREATE TABLE CustomerOrder (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    OrderDate DATE NOT NULL,
+    TotalAmount DECIMAL(10, 2) NOT NULL,
+    Status VARCHAR(20),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    ProductID INT,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES CustomerOrder(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Product(ProductID)
+);
+
+CREATE TABLE Payment (
+    PaymentID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    PaymentDate DATE NOT NULL,
+    PaymentMethod VARCHAR(20),
+    Status VARCHAR(20),
+    FOREIGN KEY (OrderID) REFERENCES CustomerOrder(OrderID)
+);
+
+CREATE TABLE Shipping (
+    ShippingID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT,
+    ShippingProvider VARCHAR(50),
+    TrackingNumber VARCHAR(50),
+    Status VARCHAR(20),
+    FOREIGN KEY (OrderID) REFERENCES CustomerOrder(OrderID)
+);
+
+-- Insert data
+INSERT INTO Supplier (SupplierName, ContactNumber, Email, Address)
+VALUES 
+('Tech Supplies Co.', '9876543210', 'info@techsupplies.com', '456 Oak Avenue'),
+('Harsh supplies Co.','6260600948', 'Harsh@infoway.com', '56 ht ways');
+
+INSERT INTO Product (ProductName, Category, Price, Stock, SupplierID)
+VALUES ('Laptop', 'Electronics', 800.00, 20, 1);
+
+INSERT INTO Customer (FirstName, LastName, Email, PhoneNumber, Address, RegistrationDate)
+VALUES ('John', 'Doe', 'john.doe@example.com', '1234567890', '123 Elm Street', '2024-01-15');
+
+-- Insert a CustomerOrder
+INSERT INTO CustomerOrder (CustomerID, OrderDate, TotalAmount, Status)
+VALUES (1, '2024-01-16', 800.00, 'Completed');  -- Assuming CustomerID 1 exists
+
+-- Insert OrderDetails for the order
+INSERT INTO OrderDetails (OrderID, ProductID, Quantity, UnitPrice)
+VALUES (1, 1, 1, 800.00);  -- Assuming OrderID 1 and ProductID 1 exist
+
+-- Now run the SELECT query
+SELECT*from Supplier,Product;
